@@ -1,5 +1,4 @@
 require 'omniauth/strategies/oauth2'
-require 'jwt'
 
 module OmniAuth
   module Strategies
@@ -27,31 +26,24 @@ module OmniAuth
         options.client_secret = provider.client_secret
         options.tenant_id =
           provider.respond_to?(:tenant_id) ? provider.tenant_id : 'common'
-        options.base_azure_url = 
+        options.base_azure_url =
           provider.respond_to?(:base_azure_url) ? provider.base_azure_url : BASE_AZURE_URL
-
         options.authorize_params.domain_hint = provider.domain_hint if provider.respond_to?(:domain_hint) && provider.domain_hint
         options.authorize_params.prompt = request.params['prompt'] if request.params['prompt']
-        options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/authorize"
-        options.client_options.token_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/token"
-
-        options.token_params.resource = options.resource
+        options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
+        options.client_options.token_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/token"
+        options.authorize_params.scope = 'openid email profile offline_access https://outlook.office.com/User.Read https://outlook.office.com/Calendars.ReadWrite'
         super
       end
 
       uid {
-        raw_info['sub']
+        raw_info['Id']
       }
 
       info do
         {
-          name: raw_info['name'],
-          nickname: raw_info['unique_name'],
-          first_name: raw_info['given_name'],
-          last_name: raw_info['family_name'],
-          email: raw_info['email'] || raw_info['upn'],
-          oid: raw_info['oid'],
-          tid: raw_info['tid']
+          name: raw_info['DisplayName'],
+          email: raw_info['EmailAddress']
         }
       end
 
@@ -60,8 +52,7 @@ module OmniAuth
       end
 
       def raw_info
-        # it's all here in JWT http://msdn.microsoft.com/en-us/library/azure/dn195587.aspx
-        @raw_info ||= ::JWT.decode(access_token.token, nil, false).first
+        @raw_info ||= access_token.get('https://outlook.office.com/api/v2.0/me').parsed
       end
 
     end

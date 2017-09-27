@@ -4,8 +4,8 @@ require File.expand_path(File.join('..', 'lib', 'omniauth', 'azure_oauth2', 'ver
 Gem::Specification.new do |gem|
   gem.authors       = ["Mark Nadig"]
   gem.email         = ["mark@nadigs.net"]
-  gem.description   = %q{An Windows Azure Active Directory OAuth2 strategy for OmniAuth}
-  gem.summary       = %q{An Windows Azure Active Directory OAuth2 strategy for OmniAuth}
+  gem.description   = %q{An Windows Azure Active Directory OAuth2 v2.0 strategy for OmniAuth}
+  gem.summary       = %q{An Windows Azure Active Directory OAuth2 v2.0 strategy for OmniAuth}
   gem.homepage      = "https://github.com/KonaTeam/omniauth-azure-oauth2"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
   gem.license       = "MIT"
 
   gem.add_dependency 'omniauth', '~> 1.0'
-  gem.add_dependency 'jwt', '~> 1.0'
 
   gem.add_runtime_dependency 'omniauth-oauth2', '~> 1.4'
 
